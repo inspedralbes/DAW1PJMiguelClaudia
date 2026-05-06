@@ -11,17 +11,18 @@
   Tornar enrere
     </a>
     <div class="px-4 py-5 my-5 text-center">
- <img src="fotos/logo.jpeg" alt="" width="72" height="72">
- <h1 class="display-5 fw-bold text-body-emphasis">Hola Alumne/Profesor!</h1>
- <div class="col-lg-6 mx-auto">
-     <p class="lead mb-4">Escull el que vols fer</p> 
-      <a href="formulari_registre_incidencia.php">
-        <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Registrar Incidència</button>
-    </a>
-      <button type="button" class="btn btn-primary btn-lg px-4">Estat d'una Incidència</button> 
-</div> 
-</div>
+        <img src="fotos/logo.jpeg" alt="" width="72" height="72">
+        <h1 class="display-5 fw-bold text-body-emphasis">Hola Alumne/Profesor!</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Escull el que vols fer</p> 
+            <a href="formulari_registre_incidencia.php">
+                <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Registrar Incidència</button>
+            </a>
+            <a href="u_estat_incidencia.php">
+                <button type="button" class="btn btn-primary btn-lg px-4">Estat d'una Incidència</button> 
+            </a>
+        </div> 
+    </div>
     <?php include 'pie.php'; ?>
-
 </body>
 </html>
