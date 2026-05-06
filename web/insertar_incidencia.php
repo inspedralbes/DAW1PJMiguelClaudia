@@ -26,8 +26,8 @@ $sentencia->bind_param("sssii", $descripcio, $data_inici, $prioritat, $resolta, 
 
 // 5. Ejecutamos y comprobamos
 if ($sentencia->execute()) {
-    // Si sale bien, volvemos al inicio con un mensaje de éxito
-    header("Location: index.php?status=success");
+    $nou_id = $mysqli->insert_id;
+    header("Location: formulari_registre_incidencia.php?id=" . $nou_id);
 } else {
     echo "Error al guardar la incidència: " . $mysqli->error;
 }

@@ -15,6 +15,12 @@
    <div class="container">
     <div class="mx-auto">
   <h1 class="mt-5">Registrar incidència</h1>
+  
+  <?php if (isset($_GET['id'])): ?>
+    <div class="alert alert-success">
+      Incidència creada correctament. El teu ID és: <strong><?php echo $_GET['id']; ?></strong>
+    </div>
+  <?php endif; ?>
   <hr>
 
   <form action="insertar_incidencia.php" method="POST">
