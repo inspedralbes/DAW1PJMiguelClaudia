@@ -83,7 +83,10 @@ if (isset($_GET['id'])) {
 <?php endif; ?>
 
 <?php include_once "encabezado_titulo.php"; ?>
-
+  
+<a href="t_que_vols_fer.php" class="btn btn-dark text-white rounded-0 btn-sm">
+      Tornar enrere
+    </a>
 <div class="container mt-5">
   <h1>Gestionar Incidència</h1>
   <hr>
