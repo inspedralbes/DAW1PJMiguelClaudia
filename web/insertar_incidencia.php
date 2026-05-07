@@ -11,11 +11,11 @@ $id_dep      = $_POST["id_departament"];
 $data_inici  = $_POST["data"];
 $descripcio  = $_POST["descripcio"];
 
-// Valores automáticos (puedes ajustarlos si quieres)
+// Valores automáticos
 $prioritat = "Mitja"; 
 $resolta   = 0;
 
-// 4. Preparamos la inserción (siguiendo tu script.sql)
+// 4. Preparamos la inserción 
 // Columnas: descripcio, data_inici, prioritat, resolta, id_departament
 $sentencia = $mysqli->prepare(
     "INSERT INTO INCIDENCIA (descripcio, data_inici, prioritat, resolta, id_departament) VALUES (?, ?, ?, ?, ?)"
