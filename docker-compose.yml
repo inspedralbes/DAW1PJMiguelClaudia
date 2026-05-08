@@ -63,9 +63,9 @@ services:
     networks:
     - app-network
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: 1234
+      ME_CONFIG_MONGODB_ADMINUSERNAME: usuari
       ME_CONFIG_MONGODB_ADMINPASSWORD: 1234
-      ME_CONFIG_MONGODB_URL: mongodb://admin:admin@mongoDB:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://usuari:1234@mongoDB:27017/
 
 volumes:
   mysql-data:
