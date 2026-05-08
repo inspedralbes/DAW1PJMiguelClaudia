@@ -16,6 +16,8 @@
     <div class="mx-auto">
   <h1 class="mt-5">Registrar incidència</h1>
   
+  <!-- Si el formulari s'ha enviat correctament, insertar_incidencia.php retorna -->
+<!-- l'ID de la nova incidencia per GET i el mostrem aqui com a confirmacio -->
   <?php if (isset($_GET['id'])): ?>
     <div class="alert alert-success">
       Incidència creada correctament. El teu ID és: <strong><?php echo $_GET['id']; ?></strong>
@@ -23,8 +25,10 @@
   <?php endif; ?>
   <hr>
 
+  <!-- Formulari que envia les dades per POST a insertar_incidencia.php -->
   <form action="insertar_incidencia.php" method="POST">
     
+    <!-- Selector de departament: cada opcio te un value amb l'ID del departament a la BD -->
     <label for="departament" class="form-label">Selecciona departament:</label>
     <select name="id_departament" class="form-select" required>
         <option value="1">Ciències naturals</option>
