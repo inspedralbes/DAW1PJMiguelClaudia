@@ -1,102 +1,81 @@
 <?php
 $mysqli = include_once "conexio.php";
-$incidencia = null;
+include_once "encabezado_titulo.php";
 
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
+$incidencies = [];
+
+if (isset($_GET['tecnic'])) {
+    $nom_tecnic = $mysqli->real_escape_string($_GET['tecnic']);
     
-    $sql = "SELECT i.id_incidencia, i.descripcio, i.data_inici, i.data_final, 
-                   i.prioritat, i.resolta, d.nom_departament,
-                   t.nom_tecnic, tp.nom_tipus
+    $sql = "SELECT i.id_incidencia, i.data_inici, i.prioritat,
+                   COALESCE(SUM(a.temps_minuts), 0) as total_minuts
             FROM INCIDENCIA i
-            LEFT JOIN DEPARTAMENT d ON i.id_departament = d.id_departament
-            LEFT JOIN TECNIC t ON i.id_tecnic = t.id_tecnic
-            LEFT JOIN TIPUS tp ON i.id_tipus = tp.id_tipus
-            WHERE i.id_incidencia = $id";
+            INNER JOIN TECNIC t ON i.id_tecnic = t.id_tecnic
+            LEFT JOIN ACTUACIONS a ON i.id_incidencia = a.id_incidencia
+            WHERE i.resolta = 0
+            AND t.nom_tecnic = '$nom_tecnic'
+            GROUP BY i.id_incidencia, i.data_inici, i.prioritat
+            ORDER BY FIELD(i.prioritat, 'Alta', 'Mitja', 'Baixa')";
     
     $resultado = $mysqli->query($sql);
-    $incidencia = $resultado->fetch_assoc();
+    $incidencies = $resultado->fetch_all(MYSQLI_ASSOC);
 }
 ?>
 
-<?php if ($incidencia): ?>
-
-  <div class="card">
-    <div class="card-header">
-      <h5 class="mb-0">Incidència #<?php echo $incidencia['id_incidencia']; ?></h5>
-    </div>
-    <div class="card-body">
-      <div class="row g-3">
-
-        <div class="col-md-4">
-          <p class="text-muted mb-1">Departament</p>
-          <p class="fw-bold"><?php echo $incidencia['nom_departament'] ?? '—'; ?></p>
-        </div>
-
-        <div class="col-md-4">
-          <p class="text-muted mb-1">Prioritat</p>
-          <p class="fw-bold"><?php echo $incidencia['prioritat'] ?? '—'; ?></p>
-        </div>
-
-        <div class="col-md-4">
-          <p class="text-muted mb-1">Tipus</p>
-          <p class="fw-bold"><?php echo $incidencia['nom_tipus'] ?? '—'; ?></p>
-        </div>
-
-        <div class="col-md-4">
-          <p class="text-muted mb-1">Tècnic</p>
-          <p class="fw-bold"><?php echo $incidencia['nom_tecnic'] ?? '—'; ?></p>
-        </div>
-
-        <div class="col-md-4">
-          <p class="text-muted mb-1">Data inici</p>
-          <p class="fw-bold"><?php echo $incidencia['data_inici'] ?? '—'; ?></p>
-        </div>
-
-        <div class="col-md-4">
-          <p class="text-muted mb-1">Estat</p>
-          <p class="fw-bold <?php echo $incidencia['resolta'] ? 'text-success' : 'text-danger'; ?>">
-            <?php echo $incidencia['resolta'] ? 'Resolta' : 'No resolta'; ?>
-          </p>
-        </div>
-
-        <div class="col-12">
-          <p class="text-muted mb-1">Descripció</p>
-          <p><?php echo $incidencia['descripcio']; ?></p>
-        </div>
-
-        <?php if (!$incidencia['resolta']): ?>
-            <div class="col-12 mt-3">
-                <form method="POST" action="tancar_incidencia.php">
-                <input type="hidden" name="id_incidencia" value="<?php echo $incidencia['id_incidencia']; ?>">
-                <button type="submit" class="btn btn-success">Tancar incidència</button>
-                </form>
-            </div>
-        <?php endif; ?>
-
-      </div>
-    </div>
-  </div>
-
-<?php elseif (isset($_GET['id'])): ?>
-  <div class="alert alert-danger">No s'ha trobat cap incidència amb aquest ID.</div>
-<?php endif; ?>
-
-<?php include_once "encabezado_titulo.php"; ?>
-  
 <a href="t_que_vols_fer.php" class="btn btn-dark text-white rounded-0 btn-sm">
-      Tornar enrere
-    </a>
+  Tornar enrere
+</a>
+
 <div class="container mt-5">
-  <h1>Gestionar Incidència</h1>
+  <h1>Informe de Tècnics</h1>
   <hr>
 
-  <form method="GET">
-    <div class="d-flex gap-2 mb-4">
-      <input type="number" name="id" class="form-control w-25" placeholder="Introdueix l'ID de la incidència...">
-      <button type="submit" class="btn btn-primary">Buscar</button>
+  <?php if (!isset($_GET['tecnic'])): ?>
+    <h4>Qui ets?</h4>
+    <div class="d-flex gap-3 mt-3">
+      <a href="?tecnic=Gerard" class="btn btn-primary btn-lg">Gerard</a>
+      <a href="?tecnic=Alvaro" class="btn btn-primary btn-lg">Alvaro</a>
+      <a href="?tecnic=Ermengol" class="btn btn-primary btn-lg">Ermengol</a>
+      <a href="?tecnic=Toni" class="btn btn-primary btn-lg">Toni</a>
     </div>
-  </form>
+
+  <?php else: ?>
+    <h3>Hola, <?php echo $_GET['tecnic']; ?>!</h3>
+<p class="text-muted">Incidències assignades no resoltes</p>
+
+<?php foreach (['Alta', 'Mitja', 'Baixa'] as $prioritat): ?>
+  <h5 class="mt-4"><?php echo $prioritat; ?></h5>
+  
+  <?php 
+  $filtrades = array_filter($incidencies, fn($i) => $i['prioritat'] === $prioritat);
+  ?>
+
+  <?php if (empty($filtrades)): ?>
+    <p class="text-muted">Cap incidència</p>
+  <?php else: ?>
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Data inici</th>
+          <th>Total temps</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($filtrades as $inc): ?>
+        <tr>
+          <td><?php echo $inc['id_incidencia']; ?></td>
+          <td><?php echo $inc['data_inici']; ?></td>
+          <td><?php echo $inc['total_minuts']; ?> min</td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  <?php endif; ?>
+
+<?php endforeach; ?>
+
+  <?php endif; ?>
 
 </div>
 

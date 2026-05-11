@@ -41,11 +41,6 @@
     </select>
 
     <div class="mt-5">
-    <label for="data" class="form-label">Data d'incidència:</label><br>
-    <input type="date" id="data" name="data" class="form-control">
-    </div>
-
-    <div class="mt-5">
     <label for="descripcio" class="form-label">Descripció:</label>
     <textarea id="descripcio" name="descripcio" rows="3" class="form-control" required></textarea>
     </div>

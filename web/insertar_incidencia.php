@@ -1,8 +1,9 @@
 <?php
+date_default_timezone_set('Europe/Madrid');
 $mysqli = include_once "conexio.php";
 
 // 2. Comprobamos que lleguen los datos del formulario
-if (empty($_POST["id_departament"]) || empty($_POST["data"]) || empty($_POST["descripcio"])) {
+if (empty($_POST["id_departament"]) || empty($_POST["descripcio"])) {
     exit("Si us plau, omple tots els camps del formulari.");
 }
 
@@ -18,11 +19,12 @@ $resolta   = 0;
 // 4. Preparamos la inserción 
 // Columnas: descripcio, data_inici, prioritat, resolta, id_departament
 $sentencia = $mysqli->prepare(
-    "INSERT INTO INCIDENCIA (descripcio, data_inici, prioritat, resolta, id_departament) VALUES (?, ?, ?, ?, ?)"
+    "INSERT INTO INCIDENCIA (descripcio, prioritat, resolta, id_departament) 
+     VALUES (?, ?, ?, ?)"
 );
 
 // "sssii" -> string, string, string, entero, entero
-$sentencia->bind_param("sssii", $descripcio, $data_inici, $prioritat, $resolta, $id_dep);
+$sentencia->bind_param("ssii", $descripcio, $prioritat, $resolta, $id_dep);
 
 // 5. Ejecutamos y comprobamos
 if ($sentencia->execute()) {
