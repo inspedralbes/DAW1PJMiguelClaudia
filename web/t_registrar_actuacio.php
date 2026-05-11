@@ -5,18 +5,25 @@ $inc = null;
 $actuacions = [];
 $error = "";
  
+// Comprovem si ha arribat un ID per la URL (?id=X)
 if (isset($_GET['id']) && $_GET['id'] !== "") {
-    $id_incidencia = intval($_GET['id']);
+    $id_incidencia = intval($_GET['id']); // Convertim a enter per seguretat
  
+    // Busquem la incidencia a la base de dades
+    // JOIN implicit entre INCIDENCIA i DEPARTAMENT per obtenir el nom del departament
+    // Nomes busquem incidencies NO resoltes (resolta = 0)
     $inc = $mysqli->query("SELECT i.id_incidencia, i.descripcio, i.data_inici, i.prioritat, d.nom_departament
         FROM INCIDENCIA i, DEPARTAMENT d
         WHERE i.id_incidencia = $id_incidencia
         AND i.id_departament = d.id_departament
-        AND i.resolta = 0")->fetch_assoc();
+        AND i.resolta = 0")->fetch_assoc(); // fetch_assoc retorna 1 sola fila com a array
  
     if (!$inc) {
+         // Si no s'ha trobat cap incidencia oberta amb aquest ID, mostrem error
         $error = "No s'ha trobat cap incidència oberta amb aquest codi.";
     } else {
+        // Si existeix, obtenim totes les actuacions d'aquesta incidencia
+        // ORDER BY data_actuacio ASC → les mes antigues primer
         $actuacions = $mysqli->query("SELECT * FROM ACTUACIONS WHERE id_incidencia = $id_incidencia ORDER BY data_actuacio ASC")->fetch_all(MYSQLI_ASSOC);
     }
 }
@@ -38,6 +45,8 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
         <h1>Registrar Actuació</h1>
         <hr>
  
+        <!-- Formulari per buscar una incidencia per ID -->
+        <!-- Envia el valor per GET a la mateixa pagina (?id=X) -->
         <form method="GET" action="t_registrar_actuacio.php" class="mb-4">
             <div class="d-flex align-items-center gap-2">
                 <label class="form-label fw-bold mb-0">Codi d'incidència:</label>
@@ -47,13 +56,15 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
             </div>
         </form>
 
+        <!-- Si hi ha error, mostrem l'alerta en vermell -->
         <?php if ($error): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
 
+        <!-- Nomes mostrem la resta si s'ha trobat la incidencia -->
         <?php if ($inc): ?>
 
-        <!-- Informació de la incidència -->
+        <!-- Targeta amb la informacio de la incidencia trobada -->
         <div class="card mb-4">
             <div class="card-header bg-dark text-white">
                 <strong>Incidència #<?php echo $inc['id_incidencia']; ?></strong>
@@ -67,9 +78,11 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
         </div>
 
         <h5>Actuacions registrades</h5>
+        <!-- Si no hi ha actuacions, mostrem un missatge informatiu -->
         <?php if (empty($actuacions)): ?>
             <p class="text-muted mb-4">Encara no hi ha actuacions per aquesta incidència.</p>
         <?php else: ?>
+        <!-- Taula amb totes les actuacions existents d'aquesta incidencia -->
         <table class="table table-striped mb-4">
             <thead class="table-dark">
                 <tr>
@@ -81,12 +94,14 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
                 </tr>
             </thead>
             <tbody>
+                <!-- $c es un contador per numerar les files (1, 2, 3...) -->
                 <?php $c = 1; foreach ($actuacions as $act): ?>
                 <tr>
                     <td><?php echo $c++; ?></td>
                     <td><?php echo $act['data_actuacio']; ?></td>
                     <td><?php echo $act['descripcio_detallada']; ?></td>
                     <td><?php echo $act['temps_minuts']; ?></td>
+                    <!-- Si visible_usuari = 1 mostra "Si", si = 0 mostra "No" -->
                     <td><?php echo $act['visible_usuari'] ? 'Sí' : 'No'; ?></td>
                 </tr>
                 <?php endforeach; ?>
@@ -94,24 +109,30 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
         </table>
         <?php endif; ?>
  
+        <!-- Targeta per afegir una nova actuacio a la incidencia -->
         <div class="card mb-4">
             <div class="card-header bg-dark text-white">
                 <strong>Nova Actuació</strong>
             </div>
             <div class="card-body">
+                <!-- Formulari que envia les dades a guardar_actuacio.php per POST -->
                 <form method="POST" action="guardar_actuacio.php">
+                    <!-- Camp ocult amb l'ID de la incidencia per enviar-lo al servidor -->
                     <input type="hidden" name="id_incidencia" value="<?php echo $inc['id_incidencia']; ?>">
  
+                    <!-- Camp de text per escriure la descripcio de l'actuacio -->
                     <div class="mb-3">
                         <label class="form-label">Descripció</label>
                         <textarea name="descripcio_detallada" rows="3" class="form-control" required></textarea>
                     </div>
  
+                    <!-- Camp numeric per indicar els minuts dedicats -->
                     <div class="mb-3">
                         <label class="form-label">Temps (minuts)</label>
                         <input type="number" name="temps_minuts" min="1" class="form-control" required>
                     </div>
  
+                    <!-- Selector per triar si l'usuari pot veure aquesta actuacio -->
                     <div class="mb-3">
                         <label class="form-label">Visible per a l'usuari?</label>
                         <select name="visible_usuari" class="form-select">
@@ -120,6 +141,7 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
                         </select>
                     </div>
  
+                    <!-- El name="accio" value="actuacio" indica a guardar_actuacio.php quin boto s'ha premut -->
                     <button type="submit" name="accio" value="actuacio" class="btn btn-primary">
                         Guardar Actuació
                     </button>
@@ -127,22 +149,26 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
             </div>
         </div>
  
-
+        <!-- Targeta per finalitzar i tancar la incidencia -->
         <div class="card mb-5">
              <div class="card-header bg-dark text-white">
                 <strong>Finalitzar Incidència</strong>
             </div>
             <div class="card-body">
                 <p class="text-muted">Un cop finalitzada, la incidència no apareixerà més al llistat.</p>
+                <!-- Formulari independent per finalitzar la incidencia -->
                 <form method="POST" action="guardar_actuacio.php">
                     <input type="hidden" name="id_incidencia" value="<?php echo $inc['id_incidencia']; ?>">
  
+                    <!-- Selector de data de finalitzacio, per defecte la data d'avui -->
                     <div class="mb-3">
                         <label class="form-label">Data de finalització</label>
                         <input type="date" name="data_final" class="form-control w-auto"
                                value="<?php echo date('Y-m-d'); ?>" required>
                     </div>
  
+                    <!-- onclick mostra una confirmacio abans d'enviar el formulari -->
+                    <!-- El name="accio" value="finalitzar" indica a guardar_actuacio.php quin boto s'ha premut -->
                     <button type="submit" name="accio" value="finalitzar" class="btn btn-primary"
                         onclick="return confirm('Segur que vols finalitzar aquesta incidència?')">
                         Marcar com a Resolta
