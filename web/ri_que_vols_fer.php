@@ -18,7 +18,9 @@
       <a href="ri_llistat_incidencies.php">
         <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Modificar Incidencia</button>
     </a>
-      <button type="button" class="btn btn-primary btn-lg px-4">Consum Per Departament</button> 
+    <a href="ri_consum_departament.php">
+      <button type="button" class="btn btn-primary btn-lg px-4">Consum Per Departament</button>
+    </a>
 </div> 
 </div>
     <?php include 'pie.php'; ?>
