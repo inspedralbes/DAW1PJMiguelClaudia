@@ -8,7 +8,7 @@ $sql = "SELECT i.id_incidencia, i.descripcio, i.data_inici, i.prioritat, i.resol
         FROM INCIDENCIA i, DEPARTAMENT d 
         WHERE i.resolta = 0
         AND i.id_departament = d.id_departament 
-        ORDER BY i.data_inici DESC";
+        ORDER BY FIELD(i.prioritat, 'Alta', 'Mitja', 'Baixa'), i.data_inici DESC";
 
 // Executem la consulta i guardem tots els resultats en un array associatiu
 $resultado = $mysqli->query($sql);
@@ -41,12 +41,23 @@ include_once "encabezado_titulo.php";
     <!-- Recorrem cada incidencia i mostrem una fila per cadascuna -->
     <tbody>
       <?php foreach ($incidencies as $inc): ?>
-      <tr>
+      <?php
+        switch ($inc['prioritat']) {
+          case 'Alta':  $classe_fila = 'table-danger';  $classe_badge = 'danger';            break;
+          case 'Mitja': $classe_fila = 'table-warning'; $classe_badge = 'warning text-dark'; break;
+          case 'Baixa': $classe_fila = 'table-success'; $classe_badge = 'success';           break;
+        }
+      ?>
+      <tr class="<?php echo $classe_fila; ?>">
         <td><?php echo $inc["id_incidencia"]; ?></td>
         <td><?php echo $inc["nom_departament"]; ?></td>
         <td><?php echo $inc["descripcio"]; ?></td>
         <td><?php echo $inc["data_inici"]; ?></td>
-        <td><?php echo $inc["prioritat"]; ?></td>
+        <td>
+          <span class="badge bg-<?php echo $classe_badge; ?>">
+            <?php echo $inc['prioritat']; ?>
+          </span>
+        </td>
         <td>
           <!-- Boto que obre el modal de modificar -->
           <!-- data-id i data-prioritat guarden les dades de la incidencia -->
