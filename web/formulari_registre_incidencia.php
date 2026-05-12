@@ -26,11 +26,12 @@
   <hr>
 
   <!-- Formulari que envia les dades per POST a insertar_incidencia.php -->
-  <form action="insertar_incidencia.php" method="POST">
+  <form action="insertar_incidencia.php" method="POST" id="formulari">
     
     <!-- Selector de departament: cada opcio te un value amb l'ID del departament a la BD -->
     <label for="departament" class="form-label">Selecciona departament:</label>
-    <select name="id_departament" class="form-select" required>
+    <select name="id_departament" id="departament" class="form-select">
+        <option value="">— Selecciona un departament —</option>
         <option value="1">Ciències naturals</option>
         <option value="2">Informàtica</option>
         <option value="3">Matemàtiques</option>
@@ -46,7 +47,7 @@
 
     <div class="mt-5">
     <label for="descripcio" class="form-label">Descripció:</label>
-    <textarea id="descripcio" name="descripcio" rows="3" class="form-control" required></textarea>
+    <textarea id="descripcio" name="descripcio" rows="3" class="form-control"></textarea>
     </div>
 
     <div class="mt-5">
@@ -56,5 +57,30 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   </div>
 </div>
+
+<script>
+
+  // document es l'objecte principal de JS es com si fosi tota la pagina HTML
+  // getElementById("formulari") busca l'element HTML que te id="formulari"
+  // addEventListener escolta un event en aquest cas "submit"
+  // el function(e) es com si en java faig public voud comprobar (event e), pero function no te nom perque es anonima
+  // Nomes es function(e)
+  document.getElementById("formulari").addEventListener("submit", function(e){
+    
+    var departament = document.getElementById("departament").value;
+    var descripcio  = document.getElementById("descripcio").value;
+
+    if (departament === "") {
+      e.preventDefault();
+      alert("Si us plau selecciona un departament")
+    }else if (descripcio.trim() === "") {
+        e.preventDefault();
+        alert("Si us plau, escriu una descripció!");
+    }
+  })
+
+</script>
+
+
 </body>
 </html>
