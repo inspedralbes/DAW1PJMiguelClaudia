@@ -32,11 +32,12 @@ if (isset($_GET['tecnic'])) {
 
   <?php if (!isset($_GET['tecnic'])): ?>
     <h4>Qui ets?</h4>
-    <div class="d-flex gap-3 mt-3">
-      <a href="?tecnic=Gerard" class="btn btn-primary btn-lg">Gerard</a>
-      <a href="?tecnic=Alvaro" class="btn btn-primary btn-lg">Alvaro</a>
-      <a href="?tecnic=Ermengol" class="btn btn-primary btn-lg">Ermengol</a>
-      <a href="?tecnic=Toni" class="btn btn-primary btn-lg">Toni</a>
+    <br>
+    <div class="d-flex gap-3 mt-3 justify-content-center">
+      <a href="?tecnic=Gerard Torrents" class="btn btn-primary btn-lg">Gerard Torrents</a>
+      <a href="?tecnic=Alvaro Pérez" class="btn btn-primary btn-lg">Alvaro Pérez</a>
+      <a href="?tecnic=Ermengol Bota" class="btn btn-primary btn-lg">Ermengol Bota</a>
+      <a href="?tecnic=Toni Martí" class="btn btn-primary btn-lg">Toni Martí</a>
     </div>
 
   <?php else: ?>

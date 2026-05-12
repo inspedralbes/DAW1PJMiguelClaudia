@@ -4,6 +4,9 @@
   <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <span class="navbar-brand mb-0 h1">Pagina d'incidències</span>
+    <a href="index.php" class="btn btn-light btn-sm rounded-pill px-3">
+    Inici
+    </a>
   </div>
 </nav>
 </nav>
