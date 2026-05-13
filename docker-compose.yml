@@ -9,8 +9,13 @@ services:
       - ./web:/var/www/html
     depends_on:
       - db
+      - mongoDB
     networks:
       - app-network
+    environment:
+      # En local usa el contenidor mongoDB del compose
+      # En producció canvia aquest valor pel string de MongoDB Atlas
+      MONGODB_URI: ${MONGODB_URI:-mongodb://usuari:1234@mongoDB:27017}
 
   # Servidor de base de dades MySQL
   db:
