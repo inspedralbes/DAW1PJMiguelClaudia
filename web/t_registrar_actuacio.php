@@ -51,7 +51,7 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
             <div class="d-flex align-items-center gap-2">
                 <label class="form-label fw-bold mb-0">Codi d'incidència:</label>
                 <input type="number" name="id" class="form-control w-auto" min="0"
-                       value="<?php echo isset($_GET['id']) ? intval($_GET['id']) : ''; ?>" required>
+                       value="<?php echo isset($_GET['id']) ? intval($_GET['id']) : ''; ?>">
                 <button type="submit" class="btn btn-primary">Continuar</button>
             </div>
         </form>
@@ -116,14 +116,14 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
             </div>
             <div class="card-body">
                 <!-- Formulari que envia les dades a guardar_actuacio.php per POST -->
-                <form method="POST" action="guardar_actuacio.php">
+                <form method="POST" action="guardar_actuacio.php" id="formulari-actuacio">
                     <!-- Camp ocult amb l'ID de la incidencia per enviar-lo al servidor -->
                     <input type="hidden" name="id_incidencia" value="<?php echo $inc['id_incidencia']; ?>">
  
                     <!-- Camp de text per escriure la descripcio de l'actuacio -->
                     <div class="mb-3">
                         <label class="form-label">Descripció</label>
-                        <textarea name="descripcio_detallada" rows="3" class="form-control" required></textarea>
+                        <textarea name="descripcio_detallada" id="descripcio-actuacio" rows="3" class="form-control"></textarea>
                     </div>
  
                     <!-- Camp numeric per indicar els minuts dedicats -->
@@ -164,7 +164,7 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
                     <div class="mb-3">
                         <label class="form-label">Data de finalització</label>
                         <input type="date" name="data_final" class="form-control w-auto"
-                               value="<?php echo date('Y-m-d'); ?>" required>
+                               value="<?php echo date('Y-m-d'); ?>">
                     </div>
  
                     <!-- onclick mostra una confirmacio abans d'enviar el formulari -->
@@ -180,7 +180,26 @@ if (isset($_GET['id']) && $_GET['id'] !== "") {
         <?php endif; ?>
     </div>
  
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+
+    </script>
+
+    <script>
+        document.getElementById("formulari-actuacio").addEventListener("submit", function(e) {
+        
+        var descripcio = document.getElementById("descripcio-actuacio").value;
+        
+        // trim() elimina espais en blanc
+        // .length retorna el numero de caracters
+        if (descripcio.trim().length < 20) {
+            e.preventDefault();
+            alert("La descripció ha de tenir almenys 20 caràcters. Ara en té " + descripcio.trim().length + ".");
+        }
+        });
+    </script>
+
     <?php include 'pie.php'; ?>
+
+    
 </body>
 </html>
