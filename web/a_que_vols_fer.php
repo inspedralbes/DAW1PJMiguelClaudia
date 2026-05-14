@@ -15,7 +15,7 @@
  <h1 class="display-5 fw-bold text-body-emphasis">Hola Administrador!</h1>
  <div class="col-lg-6 mx-auto">
      <p class="lead mb-4">Escull el que vols fer</p> 
-      <a href="estadistiques.php">
+      <a href="a_estadistiques.php">
         <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Consultar Estadistiques D'Acces</button>
     </a>
 </div> 

@@ -2,6 +2,7 @@
 require 'vendor/autoload.php';
 
 $client = new MongoDB\Client("mongodb+srv://a23migfulbel_db_user:XxjrzM98osKPkwIK@cluster0.l5p3abg.mongodb.net/?appName=Cluster0");
+
 $collection = $client->logs->logs;
 
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
