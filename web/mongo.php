@@ -1,22 +1,23 @@
 <?php
 require 'vendor/autoload.php';
 
-$client = new MongoDB\Client("mongodb://usuari:1234@mongoDB:27017");
-
+$client = new MongoDB\Client("mongodb+srv://a23migfulbel_db_user:XxjrzM98osKPkwIK@cluster0.l5p3abg.mongodb.net/?appName=Cluster0");
 $collection = $client->logs->logs;
 
-// Obtenim l'adreça IP origen de la petció.
-// Teniu informació sobre l'operador ?? a 
-// https://phpsensei.es/operadores-en-php-null-coalesce-operator/
-// "Si no es pot obtenir, es fa servir 'unknown' com a valor per defecte"
-
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-$hora = date("H:i:s");
+$url = basename($_SERVER['PHP_SELF']);
+
+if (str_starts_with($url, 'ri_'))     $usuari = 'Responsable Informàtica';
+elseif (str_starts_with($url, 't_'))  $usuari = 'Tècnic';
+elseif (str_starts_with($url, 'u_'))  $usuari = 'Usuari';
+elseif (str_starts_with($url, 'a_'))  $usuari = 'Administrador';
+else                                   $usuari = 'Altres';
 
 $collection->insertOne([
-    'name' => 'Anna',
-    'age' => 28,
-    'ip_origin' => $ip,
-    'date' => $hora
+    'url'       => $url,
+    'metode'    => $_SERVER['REQUEST_METHOD'],
+    'usuari_id' => $usuari,
+    'timestamp' => new MongoDB\BSON\UTCDateTime(),
+    'navegador' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+    'ip'        => $ip,
 ]);
-echo "Dades inserides a demo .\n";

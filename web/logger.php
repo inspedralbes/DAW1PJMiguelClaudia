@@ -1,16 +1,11 @@
 <?php
-require_once __DIR__ . "/vendor/autoload.php";
+require 'vendor/autoload.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+$client = new MongoDB\Client("mongodb://usuari:1234@mongoDB:27017");
+$collection = $client->logs->logs;
 
 //Guarda el moment exacte en què comença a executar-se la pàgina
 $temps_inici = microtime(true);
-
-//Carrega la connexió a MongoDB
-$db_mongo = include_once "conexio_mongo.php";
-//Selecciona la col·lecció logs (taula a sql) dins la base de dades.
-$col = $db_mongo->logs;
 
 //$_SERVER['PHP_SELF'] conté la ruta completa de la pàgina actual
 //basename() elimina la ruta i deixa només el nom del fitxer
@@ -32,12 +27,12 @@ $timestamp = new MongoDB\BSON\UTCDateTime();
 $navegador = $_SERVER['HTTP_USER_AGENT'] ?? 'desconegut';
 
 //Obté la IP del client que fa la petició.
-$ip = $_SERVER['REMOTE_ADDR'] ?? 'desconeguda';
+$ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 //Calcula quants mil·lisegons ha tardat la pàgina:
 $temps_resposta_ms = round((microtime(true) - $temps_inici) * 1000);
 
 //Insereix un document a MongoDB amb tots els camps recollits. 
-$col->insertOne([
+$collection->insertOne([
     'url'               => $url,
     'metode'            => $metode,
     'usuari_id'         => $usuari_id,
