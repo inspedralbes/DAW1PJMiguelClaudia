@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/vendor/autoload.php";
 //Guarda el moment exacte en què comença a executar-se la pàgina
 $temps_inici = microtime(true);
 
