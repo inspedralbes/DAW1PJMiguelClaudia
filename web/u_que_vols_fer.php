@@ -15,7 +15,7 @@
         <h1 class="display-5 fw-bold text-body-emphasis">Hola Alumne/Profesor!</h1>
         <div class="col-lg-6 mx-auto">
             <p class="lead mb-4">Escull el que vols fer</p> 
-            <a href="formulari_registre_incidencia.php">
+            <a href="u_formulari_registre_incidencia.php">
                 <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Registrar Incidència</button>
             </a>
             <a href="u_estat_incidencia.php">
