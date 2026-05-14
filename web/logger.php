@@ -42,5 +42,5 @@ $col->insertOne([
     'timestamp'         => $timestamp,
     'navegador'         => $navegador,
     'ip'                => $ip,
-    'temps_resposta_ms' => $temps_resposta_ms,
+    'temps_resposta_ms' =>  $temps_resposta_ms,
 ]);
