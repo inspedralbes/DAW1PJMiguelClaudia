@@ -34,7 +34,7 @@ if ($sentencia->execute()) {
     // insert_id retorna l'ID que MySQL ha assignat automaticament a la nova incidencia
     $nou_id = $mysqli->insert_id;
     // Redirigim al formulari de confirmacio passant el nou ID per URL
-    header("Location: formulari_registre_incidencia.php?id=" . $nou_id);
+    header("Location: u_formulari_registre_incidencia.php?id=" . $nou_id);
 } else {
     // Si ha fallat, mostrem el missatge d'error de MySQL
     echo "Error al guardar la incidència: " . $mysqli->error;
