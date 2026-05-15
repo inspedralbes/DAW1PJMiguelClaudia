@@ -1,3 +1,47 @@
+<?php
+require 'vendor/autoload.php';
+$collection = include_once 'conexio_mongo.php';
+
+// Total d'accessos: cuenta todos los documentos de la colección
+$total_accessos = $collection->countDocuments([]);
+
+// aggregate es como un pipeline — procesa los documentos en pasos:
+//$group — agrupa por url y cuenta cuántas veces aparece cada una con $sum: 1
+//$sort — ordena de más a menos visitas (-1 = descendente)
+//$limit — solo las 8 primeras
+$pagines = $collection->aggregate([
+    ['$group' => ['_id' => '$url', 'visites' => ['$sum' => 1]]],
+    ['$sort' => ['visites' => -1]],
+    ['$limit' => 8]
+])->toArray();
+
+// Igual pero agrupa por ip Y usuari_id juntos — así identifica usuarios únicos por IP y rol.
+$usuaris = $collection->aggregate([
+    ['$group' => ['_id' => ['ip' => '$ip', 'rol' => '$usuari_id'], 'accessos' => ['$sum' => 1]]],
+    ['$sort' => ['accessos' => -1]],
+    ['$limit' => 7]
+])->toArray();
+
+// Agrupa por día — $dateToString convierte el timestamp a texto con formato 2026-05-15. Así cuenta los accesos de cada día para el gráfico.
+$accessos_dia = $collection->aggregate([
+    ['$group' => [
+        '_id' => ['$dateToString' => ['format' => '%Y-%m-%d', 'date' => '$timestamp']],
+        'total' => ['$sum' => 1]
+    ]],
+    ['$sort' => ['_id' => 1]],
+    ['$limit' => 14]
+])->toArray();
+
+// Usuaris únics — conta IPs diferents
+$usuaris_unics = count($collection->distinct('ip'));
+
+// Temps mig de resposta
+$temps_mig = $collection->aggregate([
+    ['$group' => ['_id' => null, 'mitjana' => ['$avg' => '$temps_resposta_ms']]]
+])->toArray();
+$temps_mig_ms = isset($temps_mig[0]) ? round($temps_mig[0]['mitjana']) : 0;
+?>
+
 <!DOCTYPE html>
 <html lang="ca">
 <head>
@@ -24,7 +68,7 @@
         <div class="col-6 col-md-3">
             <div class="card text-center border-primary">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">3.847</h5>
+                    <h5 class="card-title text-primary"><?php echo $total_accessos; ?></h5>
                     <p class="card-text text-muted small">Accessos Totals</p>
                 </div>
             </div>
@@ -32,61 +76,12 @@
         <div class="col-6 col-md-3">
             <div class="card text-center border-success">
                 <div class="card-body">
-                    <h5 class="card-title text-success">284</h5>
+                    <h5 class="card-title text-success"><?php echo $usuaris_unics; ?></h5>
                     <p class="card-text text-muted small">Usuaris Únics</p>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card text-center border-warning">
-                <div class="card-body">
-                    <h5 class="card-title text-warning">142 ms</h5>
-                    <p class="card-text text-muted small">Temps Mig Resposta</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- FILTRES -->
-    <div class="card mb-4">
-        <div class="card-header">Filtres</div>
-        <div class="card-body">
-            <div class="row g-2 align-items-end">
-                <div class="col-6 col-md-2">
-                    <label class="form-label small">Data inici</label>
-                    <input type="date" class="form-control form-control-sm" value="2025-04-14">
-                </div>
-                <div class="col-6 col-md-2">
-                    <label class="form-label small">Data fi</label>
-                    <input type="date" class="form-control form-control-sm" value="2025-05-14">
-                </div>
-                <div class="col-6 col-md-3">
-                    <label class="form-label small">Rol d'usuari</label>
-                    <select class="form-select form-select-sm">
-                        <option value="">Tots els rols</option>
-                        <option>Responsable Informàtica</option>
-                        <option>Tècnic</option>
-                        <option>Alumne / Professor</option>
-                        <option>Administrador</option>
-                    </select>
-                </div>
-                <div class="col-6 col-md-3">
-                    <label class="form-label small">Pàgina</label>
-                    <select class="form-select form-select-sm">
-                        <option value="">Totes les pàgines</option>
-                        <option>index.php</option>
-                        <option>ri_llistat_incidencies.php</option>
-                        <option>t_registrar_actuacio.php</option>
-                        <option>u_formulari_registre_incidencia.php</option>
-                        <option>u_estat_incidencia.php</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-2 d-flex gap-2">
-                    <button class="btn btn-primary btn-sm w-100">Aplicar</button>
-                    <button class="btn btn-outline-secondary btn-sm w-100">Reset</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- GRÀFIC -->
@@ -110,14 +105,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td>index.php</td><td>842</td></tr>
-                    <tr><td>2</td><td>u_formulari_registre_incidencia.php</td><td>631</td></tr>
-                    <tr><td>3</td><td>ri_llistat_incidencies.php</td><td>498</td></tr>
-                    <tr><td>4</td><td>t_registrar_actuacio.php</td><td>387</td></tr>
-                    <tr><td>5</td><td>u_estat_incidencia.php</td><td>354</td></tr>
-                    <tr><td>6</td><td>guardar_actuacio.php</td><td>283</td></tr>
-                    <tr><td>7</td><td>ri_consum_departament.php</td><td>201</td></tr>
-                    <tr><td>8</td><td>t_gestionar_incidencia.php</td><td>178</td></tr>
+                    <?php foreach ($pagines as $i => $pagina): ?>
+                        <tr>
+                            <td><?php echo $i + 1; ?></td>
+                            <td><?php echo $pagina['_id']; ?></td>
+                            <td><?php echo $pagina['visites']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -134,13 +128,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td><span class="badge bg-success">Tècnic</span></td><td>192.168.1.10</td><td>412</td></tr>
-                    <tr><td>2</td><td><span class="badge bg-warning text-dark">Alumne/Prof.</span></td><td>192.168.1.23</td><td>388</td></tr>
-                    <tr><td>3</td><td><span class="badge bg-primary">Resp. Info.</span></td><td>10.0.0.5</td><td>311</td></tr>
-                    <tr><td>4</td><td><span class="badge bg-warning text-dark">Alumne/Prof.</span></td><td>192.168.1.45</td><td>276</td></tr>
-                    <tr><td>5</td><td><span class="badge bg-success">Tècnic</span></td><td>192.168.2.7</td><td>198</td></tr>
-                    <tr><td>6</td><td><span class="badge bg-danger">Administrador</span></td><td>10.0.0.12</td><td>97</td></tr>
-                    <tr><td>7</td><td><span class="badge bg-secondary">Altres</span></td><td>10.0.0.31</td><td>44</td></tr>
+                    <?php foreach ($usuaris as $i => $usuari): ?>
+                        <tr>
+                            <td><?php echo $i + 1; ?></td>
+                            <td><span class="badge bg-secondary"><?php echo $usuari['_id']['rol']; ?></span></td>
+                            <td><?php echo $usuari['_id']['ip']; ?></td>
+                            <td><?php echo $usuari['accessos']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -150,12 +145,12 @@
 <?php include 'pie.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const now = new Date();
-    const labels = Array.from({length: 14}, (_, i) => {
-        const d = new Date(now - (13 - i) * 86400000);
-        return d.toLocaleDateString('ca-ES', {day: '2-digit', month: '2-digit'});
-    });
-    const data = Array.from({length: 14}, () => 80 + Math.floor(Math.random() * 280));
+    const labels = <?php 
+    echo json_encode(array_map(fn($d) => $d['_id'], $accessos_dia));
+    ?>;
+    const data = <?php 
+    echo json_encode(array_map(fn($d) => $d['total'], $accessos_dia));
+    ?>;
 
     new Chart(document.getElementById('chartLine'), {
         type: 'line',
@@ -173,10 +168,17 @@
             }]
         },
         options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } }
-        }
+                esponsive: true,
+                plugins: { legend: { display: false } },
+                scales: { 
+            y: { 
+                beginAtZero: true 
+            },
+             x: {
+                bounds: 'data'
+            }
+    }
+}
     });
 </script>
 </body>
