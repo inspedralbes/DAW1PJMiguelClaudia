@@ -11,7 +11,6 @@ if (empty($_POST["id_departament"]) || empty($_POST["descripcio"])) {
 
 // Recollim els valors que ha enviat l'usuari des del formulari
 $id_dep      = $_POST["id_departament"];
-$data_inici  = $_POST["data"];
 $descripcio  = $_POST["descripcio"];
 
 // Valors automatics que no introdueix l'usuari
