@@ -27,7 +27,7 @@ include_once "encabezado_titulo.php";
 
 <div class="container mt-5">
   <h1>Llistat d'Incidències</h1>
-  <table class="table table-striped">
+  <table class="table table-striped" aria-label="Llistat d'incidències no resoltes">
     <thead class="table-dark">
       <tr>
         <th>ID</th>
@@ -76,13 +76,13 @@ include_once "encabezado_titulo.php";
   </table>
 </div>
 
-<div class="modal fade" id="modalModificar" tabindex="-1">
+<div class="modal fade" id="modalModificar" tabindex="-1" aria-labelledby="modalTitle" aria-modal="true" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <!-- El span #modal-id-display s'omple amb JavaScript amb el ID de la incidencia -->
-        <h5 class="modal-title">Modificar Incidència <span id="modal-id-display"></span></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title" id="modalTitle">Modificar Incidència <span id="modal-id-display"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tancar"></button>
       </div>
       <div class="modal-body">
         <!-- Formulari que envia les dades a guardar_incidencia.php -->
@@ -92,7 +92,7 @@ include_once "encabezado_titulo.php";
 
           <!-- Selector de prioritat -->
           <div class="mb-3">
-            <label class="form-label">Prioritat</label>
+            <label class="form-label" for="modal-prioritat">Prioritat</label>
             <select name="prioritat" id="modal-prioritat" class="form-select">
               <option value="Alta">Alta</option>
               <option value="Mitja">Mitja</option>
@@ -102,7 +102,7 @@ include_once "encabezado_titulo.php";
 
           <!-- Selector de tipus d'incidencia → ve de la consulta SQL de $tipus -->
           <div class="mb-3">
-            <label class="form-label">Tipus</label>
+            <label class="form-label" for="modal-tipus">Tipus</label>
             <select name="id_tipus" id="modal-tipus" class="form-select">
               <option value="">— Sense tipus —</option>
               <?php foreach ($tipus as $tip): ?>
@@ -113,7 +113,7 @@ include_once "encabezado_titulo.php";
 
           <!-- Selector de tecnic assignat → ve de la consulta SQL de $tecnics -->
           <div class="mb-3">
-            <label class="form-label">Tècnic</label>
+            <label class="form-label" for="modal-tecnic">Tècnic</label>
             <select name="id_tecnic" id="modal-tecnic" class="form-select">
               <option value="">— Sense tècnic —</option>
               <?php foreach ($tecnics as $tec): ?>

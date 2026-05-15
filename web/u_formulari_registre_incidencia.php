@@ -19,7 +19,7 @@
   <!-- Si el formulari s'ha enviat correctament, insertar_incidencia.php retorna -->
 <!-- l'ID de la nova incidencia per GET i el mostrem aqui com a confirmacio -->
   <?php if (isset($_GET['id'])): ?>
-    <div class="alert alert-success">
+    <div class="alert alert-success" role="alert">
       Incidència creada correctament. El teu ID és: <strong><?php echo $_GET['id']; ?></strong>
     </div>
   <?php endif; ?>
@@ -30,7 +30,7 @@
     
     <!-- Selector de departament: cada opcio te un value amb l'ID del departament a la BD -->
     <label for="departament" class="form-label">Selecciona departament:</label>
-    <select name="id_departament" id="departament" class="form-select">
+    <select name="id_departament" id="departament" class="form-select" aria-required="true">
         <option value="">— Selecciona un departament —</option>
         <option value="1">Ciències naturals</option>
         <option value="2">Informàtica</option>
@@ -47,11 +47,11 @@
 
     <div class="mt-5">
     <label for="descripcio" class="form-label">Descripció:</label>
-    <textarea id="descripcio" name="descripcio" rows="3" class="form-control"></textarea>
+    <textarea id="descripcio" name="descripcio" rows="3" class="form-control" aria-required="true"></textarea>
     </div>
 
     <div class="mt-5">
-    <button type="submit" class="btn btn-primary">Enviar</button>
+    <button type="submit" class="btn btn-primary" aria-label="Enviar incidència">Enviar</button>
     </div>
   </form>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
